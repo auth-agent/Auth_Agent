@@ -25,7 +25,7 @@ export function spinningPage(requestId: string, clientName: string, baseUrl: str
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      color: #333;
+      color: #fff;
     }
 
     @keyframes gradientShift {
@@ -37,15 +37,16 @@ export function spinningPage(requestId: string, clientName: string, baseUrl: str
       text-align: center;
       max-width: 500px;
       padding: 40px;
-      background: #ffffff;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid #FF6B35;
       border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 32px rgba(255, 107, 53, 0.4);
     }
 
     .brand {
       font-size: 32px;
       font-weight: 700;
-      color: #333;
+      color: #FF6B35;
       margin-bottom: 30px;
       letter-spacing: -0.5px;
     }
@@ -53,8 +54,8 @@ export function spinningPage(requestId: string, clientName: string, baseUrl: str
     .spinner {
       width: 80px;
       height: 80px;
-      border: 8px solid rgba(0, 0, 0, 0.1);
-      border-top-color: #333;
+      border: 8px solid rgba(255, 107, 53, 0.2);
+      border-top-color: #FF6B35;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin: 0 auto 30px;
@@ -68,40 +69,40 @@ export function spinningPage(requestId: string, clientName: string, baseUrl: str
       font-size: 28px;
       margin-bottom: 15px;
       font-weight: 600;
-      color: #333;
+      color: #fff;
     }
 
     p {
       font-size: 16px;
-      color: #666;
+      color: rgba(255, 255, 255, 0.9);
       line-height: 1.6;
     }
 
     .ai-only-message {
       margin-top: 20px;
       padding: 15px;
-      background: #fff3e0;
-      border: 1px solid #ffcc80;
+      background: rgba(255, 107, 53, 0.2);
+      border: 1px solid #FF6B35;
       border-radius: 10px;
       font-size: 14px;
-      color: #e65100;
+      color: #FF6B35;
       font-weight: 500;
     }
 
     .client-info {
       margin-top: 20px;
       padding: 15px;
-      background: #f5f5f5;
-      border: 1px solid #e0e0e0;
+      background: rgba(255, 107, 53, 0.15);
+      border: 1px solid rgba(255, 107, 53, 0.3);
       border-radius: 10px;
       font-size: 14px;
-      color: #333;
+      color: #fff;
     }
 
     .status {
       margin-top: 25px;
       font-size: 14px;
-      color: #666;
+      color: rgba(255, 255, 255, 0.8);
     }
 
     .dots::after {
