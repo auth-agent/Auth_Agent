@@ -9,14 +9,24 @@ import {
   isAllowedRedirectUri,
   isValidCodeChallengeMethod,
   isValidClientId,
+  isValidRedirectUri,
 } from "./lib/validation";
 
 const http = httpRouter();
 
 // Get base URL from environment or request
+// Ensures HTTPS in production
 function getBaseUrl(request: Request): string {
   const url = new URL(request.url);
-  return process.env.CONVEX_SITE_URL || `${url.protocol}//${url.host}`;
+  const baseUrl = process.env.CONVEX_SITE_URL || `${url.protocol}//${url.host}`;
+  
+  // If no env var is set and request is HTTP, warn (Convex typically serves HTTPS)
+  // In production, Convex always serves via HTTPS
+  if (!process.env.CONVEX_SITE_URL && url.protocol === 'http:' && url.hostname !== 'localhost') {
+    console.warn('Warning: Using HTTP instead of HTTPS. This should only happen in development.');
+  }
+  
+  return baseUrl;
 }
 
 // ===================================================
@@ -92,11 +102,17 @@ http.route({
       });
     }
 
-    if (!isValidUrl(redirect_uri)) {
-      return new Response(errorPage("invalid_request", "Invalid redirect_uri format"), {
-        status: 400,
-        headers: { "Content-Type": "text/html" },
-      });
+    if (!isValidRedirectUri(redirect_uri)) {
+      return new Response(
+        errorPage(
+          "invalid_request",
+          "Invalid redirect_uri format. HTTPS is required (HTTP allowed only for localhost)"
+        ),
+        {
+          status: 400,
+          headers: { "Content-Type": "text/html" },
+        }
+      );
     }
 
     if (!isValidCodeChallengeMethod(code_challenge_method)) {
@@ -177,6 +193,20 @@ http.route({
           JSON.stringify({
             error: "invalid_request",
             error_description: "Missing required parameters",
+          }),
+          {
+            status: 400,
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+      }
+
+      // Validate redirect_uri format and HTTPS
+      if (!isValidRedirectUri(redirect_uri)) {
+        return new Response(
+          JSON.stringify({
+            error: "invalid_request",
+            error_description: "Invalid redirect_uri format. HTTPS is required (HTTP allowed only for localhost)",
           }),
           {
             status: 400,

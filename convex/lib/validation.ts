@@ -21,10 +21,40 @@ export function isValidUrl(url: string): boolean {
 }
 
 /**
+ * Validate that URL uses HTTPS (required for OAuth 2.1)
+ * Allows HTTP only for localhost (development)
+ */
+export function requiresHttps(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    // Allow HTTP only for localhost/127.0.0.1 (development)
+    if (parsed.protocol === 'http:') {
+      const hostname = parsed.hostname.toLowerCase();
+      return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '[::1]';
+    }
+    // Require HTTPS for all other URLs
+    return parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Validate that a redirect URI matches one of the allowed URIs
  */
 export function isAllowedRedirectUri(uri: string, allowedUris: string[]): boolean {
   return allowedUris.includes(uri);
+}
+
+/**
+ * Validate redirect URI with HTTPS requirement
+ */
+export function isValidRedirectUri(uri: string): boolean {
+  if (!isValidUrl(uri)) {
+    return false;
+  }
+  // OAuth 2.1 requires HTTPS (except localhost for development)
+  return requiresHttps(uri);
 }
 
 /**
