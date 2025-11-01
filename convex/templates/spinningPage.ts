@@ -18,43 +18,43 @@ export function spinningPage(requestId: string, clientName: string, baseUrl: str
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      background: #000000;
+      background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #FF6B35 100%);
+      background-size: 400% 400%;
+      animation: gradientShift 8s ease infinite;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      color: #fff;
+      color: #333;
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
     }
 
     .container {
       text-align: center;
       max-width: 500px;
       padding: 40px;
-      background: rgba(255, 107, 53, 0.1);
-      border: 2px solid #FF6B35;
+      background: #ffffff;
       border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(255, 107, 53, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
 
-    .logo {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .logo svg {
-      width: 100%;
-      height: 100%;
+    .brand {
+      font-size: 32px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 30px;
+      letter-spacing: -0.5px;
     }
 
     .spinner {
       width: 80px;
       height: 80px;
-      border: 8px solid rgba(255, 107, 53, 0.2);
-      border-top-color: #FF6B35;
+      border: 8px solid rgba(0, 0, 0, 0.1);
+      border-top-color: #333;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin: 0 auto 30px;
@@ -68,40 +68,40 @@ export function spinningPage(requestId: string, clientName: string, baseUrl: str
       font-size: 28px;
       margin-bottom: 15px;
       font-weight: 600;
-      color: #FF6B35;
+      color: #333;
     }
 
     p {
       font-size: 16px;
-      opacity: 0.9;
+      color: #666;
       line-height: 1.6;
     }
 
     .ai-only-message {
       margin-top: 20px;
       padding: 15px;
-      background: rgba(255, 107, 53, 0.15);
-      border: 1px solid #FF6B35;
+      background: #fff3e0;
+      border: 1px solid #ffcc80;
       border-radius: 10px;
       font-size: 14px;
-      color: #FF6B35;
+      color: #e65100;
       font-weight: 500;
     }
 
     .client-info {
       margin-top: 20px;
       padding: 15px;
-      background: rgba(255, 107, 53, 0.15);
-      border: 1px solid rgba(255, 107, 53, 0.3);
+      background: #f5f5f5;
+      border: 1px solid #e0e0e0;
       border-radius: 10px;
       font-size: 14px;
-      color: #fff;
+      color: #333;
     }
 
     .status {
       margin-top: 25px;
       font-size: 14px;
-      opacity: 0.8;
+      color: #666;
     }
 
     .dots::after {
@@ -119,18 +119,7 @@ export function spinningPage(requestId: string, clientName: string, baseUrl: str
 </head>
 <body>
   <div class="container">
-    <div class="logo">
-      <svg width="80" height="80" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="1080" height="1080" fill="#000000"/>
-        <rect x="270" y="630" width="540" height="540" fill="#FF6B35"/>
-        <rect x="540" y="360" width="540" height="540" fill="#FF6B35"/>
-        <line x1="270" y1="630" x2="90" y2="450" stroke="#FF6B35" stroke-width="8" stroke-dasharray="10,10"/>
-        <line x1="810" y1="630" x2="990" y2="450" stroke="#FF6B35" stroke-width="8" stroke-dasharray="10,10"/>
-        <line x1="810" y1="1170" x2="990" y2="1350" stroke="#FF6B35" stroke-width="8" stroke-dasharray="10,10"/>
-        <line x1="1080" y1="360" x2="1260" y2="180" stroke="#FF6B35" stroke-width="8" stroke-dasharray="10,10"/>
-        <line x1="1080" y1="900" x2="1260" y2="1080" stroke="#FF6B35" stroke-width="8" stroke-dasharray="10,10"/>
-      </svg>
-    </div>
+    <div class="brand">Auth-Agent</div>
     <div class="spinner"></div>
     <h1>Authenticating AI Agent</h1>
     <p>Please wait while your AI agent is being authenticated.</p>
