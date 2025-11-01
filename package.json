@@ -1,0 +1,30 @@
+{
+  "name": "auth_agent_yc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "seed": "tsx scripts/seed.ts",
+    "test:flow": "tsx scripts/test-flow.ts",
+    "test": "npm run test:flow"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@hono/node-server": "^1.19.6",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^24.9.2",
+    "bcryptjs": "^3.0.2",
+    "hono": "^4.10.4",
+    "jsonwebtoken": "^9.0.2",
+    "nanoid": "^5.1.6",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
