@@ -20,10 +20,20 @@ A specialized OAuth 2.1 authorization server designed for autonomous AI agents. 
 
 Watch Auth Agent in action:
 
-- **[Demo 1: Browser-Use Integration](./demo/Built-in%20Retina%20Display%202025-11-01%2011:14:12.mp4)** - AI agent authenticating with browser-use
-- **[Demo 2: E-commerce Website](./demo/Built-in%20Retina%20Display%202025-11-01%2012:08:45.mp4)** - Agent signing in to e-commerce dashboard
-- **[Demo 3: Crypto Exchange](./demo/Built-in%20Retina%20Display%202025-11-01%2012:31:36.mp4)** - Authentication flow on crypto trading platform
-- **[Demo 4: GitHub Clone](./demo/Built-in%20Retina%20Display%202025-11-01%2012:40:05.mp4)** - Full OAuth flow on GitHub-style website
+### Demo 1: Profilio Integration
+AI agent authenticating on Profilio platform using browser-use.
+
+![Profilio Demo](./demo/gif/Profilio.gif)
+
+### Demo 2: Crypto Exchange Dashboard
+Authentication flow on crypto trading platform.
+
+![Crypto Exchange Demo](./demo/gif/Crypto_Website_Demo.gif)
+
+### Demo 3: GitHub Clone Website
+Full OAuth flow on GitHub-style repository dashboard.
+
+![GitHub Clone Demo](./demo/gif/Github_Replica_Website_Demo.gif)
 
 ## ✨ Features
 
