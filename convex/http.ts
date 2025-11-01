@@ -235,8 +235,9 @@ http.route({
 
       // Verify PKCE
       const pkceValid = await ctx.runAction(internal.actions.cryptoActions.validatePKCEAction, {
-        code_verifier,
-        code_challenge: authCode.code_challenge,
+        codeVerifier: code_verifier,
+        codeChallenge: authCode.code_challenge,
+        method: 'S256',
       });
 
       if (!pkceValid) {
@@ -267,21 +268,22 @@ http.route({
       }
 
       // Generate tokens
-      const tokenId = `tok_${await ctx.runAction(internal.actions.cryptoActions.generateSecureRandomAction, { bytes: 16 })}`;
-      const refreshTokenValue = `rt_${await ctx.runAction(internal.actions.cryptoActions.generateSecureRandomAction, { bytes: 32 })}`;
+      const randomValue1 = await ctx.runAction(internal.actions.cryptoActions.generateSecureRandomAction, { bytes: 16 });
+      const randomValue2 = await ctx.runAction(internal.actions.cryptoActions.generateSecureRandomAction, { bytes: 32 });
+      const tokenId = `tok_${randomValue1}`;
+      const refreshTokenValue = `rt_${randomValue2}`;
 
       const accessTokenExpiresAt = Date.now() + (3600 * 1000); // 1 hour
       const refreshTokenExpiresAt = Date.now() + (30 * 24 * 3600 * 1000); // 30 days
 
       const accessToken = await ctx.runAction(internal.actions.cryptoActions.generateJWTAction, {
-        payload: {
-          sub: authCode.agent_id,
-          client_id: authCode.client_id,
-          model: authCode.model,
-          scope: authCode.scope,
-          token_id: tokenId,
-        },
+        agentId: authCode.agent_id,
+        clientId: authCode.client_id,
+        model: authCode.model,
+        scope: authCode.scope,
         expiresIn: 3600,
+        issuer: CONFIG.JWT_ISSUER,
+        secret: CONFIG.JWT_SECRET,
       });
 
       // Store tokens
