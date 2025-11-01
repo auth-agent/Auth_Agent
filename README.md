@@ -1,85 +1,172 @@
+<div align="center">
+
+![Auth Agent Logo](./logo/AA.png)
+
 # Auth Agent - OAuth 2.1 for AI Agents
 
-A specialized OAuth 2.1 authorization server designed for autonomous AI agents. Unlike traditional OAuth flows that require human interaction, Auth Agent enables AI agents to authenticate themselves programmatically while maintaining security through PKCE and credential verification.
+**Standardized authentication for autonomous AI agents**
 
-## Features
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Convex](https://img.shields.io/badge/Convex-Serverless-6B46C1)](https://convex.dev)
 
-- **OAuth 2.1 Compliant** - Full implementation with PKCE required
-- **AI Agent Authentication** - Agents authenticate using agent_id + agent_secret
-- **No User Consent** - Streamlined for autonomous agents (consent handled during onboarding)
-- **JWT Access Tokens** - Stateless token validation with JWT
-- **Refresh Tokens** - Long-lived sessions with opaque refresh tokens
-- **Token Introspection** - RFC 7662 compliant token validation
-- **Token Revocation** - RFC 7009 compliant token revocation
-- **OAuth Discovery** - RFC 8414 metadata endpoint
+A specialized OAuth 2.1 authorization server designed for autonomous AI agents. Unlike traditional OAuth flows that require human interaction, Auth Agent enables AI agents to authenticate themselves programmatically while maintaining enterprise-grade security through PKCE and credential verification.
 
-## How It Works
+</div>
 
-### Traditional OAuth vs Auth Agent
+---
+
+## 🎥 Video Demos
+
+Watch Auth Agent in action:
+
+- **[Demo 1: Browser-Use Integration](./demo/Built-in%20Retina%20Display%202025-11-01%2011:14:12.mp4)** - AI agent authenticating with browser-use
+- **[Demo 2: E-commerce Website](./demo/Built-in%20Retina%20Display%202025-11-01%2012:08:45.mp4)** - Agent signing in to e-commerce dashboard
+- **[Demo 3: Crypto Exchange](./demo/Built-in%20Retina%20Display%202025-11-01%2012:31:36.mp4)** - Authentication flow on crypto trading platform
+- **[Demo 4: GitHub Clone](./demo/Built-in%20Retina%20Display%202025-11-01%2012:40:05.mp4)** - Full OAuth flow on GitHub-style website
+
+## ✨ Features
+
+- **🔐 OAuth 2.1 Compliant** - Full implementation with PKCE required
+- **🤖 AI Agent Authentication** - Agents authenticate using `agent_id` + `agent_secret`
+- **⚡ No User Consent** - Streamlined for autonomous agents (consent handled during onboarding)
+- **🎫 JWT Access Tokens** - Stateless token validation with JWT (HS256)
+- **🔄 Refresh Tokens** - Long-lived sessions with opaque refresh tokens
+- **🔍 Token Introspection** - RFC 7662 compliant token validation
+- **🗑️ Token Revocation** - RFC 7009 compliant token revocation
+- **📋 OAuth Discovery** - RFC 8414 metadata endpoint
+- **🌐 Serverless Deployment** - Zero-config deployment on Convex
+- **📦 SDK Support** - TypeScript & Python SDKs for easy integration
+
+## 🛠️ Tech Stack
+
+### Backend & Infrastructure
+- **[Convex](https://convex.dev)** - Serverless backend, database, and HTTP functions
+- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe development
+- **[Node.js](https://nodejs.org/)** - Runtime for crypto operations
+- **[JWT](https://jwt.io/)** - JSON Web Tokens for stateless authentication
+
+### Frontend & Client SDKs
+- **[Next.js](https://nextjs.org/)** - React framework for demo websites
+- **[React](https://react.dev/)** - UI components and SDK widgets
+- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe client SDK
+- **[Tailwind CSS](https://tailwindcss.com/)** - Styling for demo websites
+
+### AI Agent Integration
+- **[Python](https://www.python.org/)** - Agent SDK and browser automation
+- **[browser-use](https://browser-use.com/)** - Browser automation framework
+- **[aiohttp](https://docs.aiohttp.org/)** - Async HTTP client for agents
+
+### Database & Storage
+- **[Convex Database](https://convex.dev)** - Serverless, real-time database
+- **[Supabase](https://supabase.com/)** - Used in Profilio integration demo
+
+### Deployment
+- **[Vercel](https://vercel.com/)** - Frontend deployment (demo websites)
+- **[Convex Cloud](https://convex.dev)** - Backend deployment (serverless)
+
+### Security & Cryptography
+- **PBKDF2** - Password hashing for secrets
+- **SHA-256** - PKCE code challenge hashing
+- **HS256** - JWT signing algorithm
+- **bcrypt** - Additional credential hashing
+
+## 🔄 Complete OAuth 2.1 Workflow
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                          AUTH AGENT OAUTH 2.1 FLOW                          │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌──────────────┐                    ┌─────────────┐              ┌──────────────┐
+│  AI Agent    │                    │  Website    │              │ Auth Server  │
+│ (browser-use)│                    │  (Next.js)  │              │   (Convex)   │
+└──────┬───────┘                    └──────┬──────┘              └──────┬───────┘
+       │                                    │                           │
+       │  1. Navigate to website           │                           │
+       │──────────────────────────────────>│                           │
+       │                                    │                           │
+       │  2. Click "Sign in with           │                           │
+       │     Auth Agent" button            │                           │
+       │──────────────────────────────────>│                           │
+       │                                    │                           │
+       │                                    │  3. Generate PKCE        │
+       │                                    │     (code_verifier,       │
+       │                                    │      code_challenge)     │
+       │                                    │                           │
+       │                                    │  4. Redirect to /authorize│
+       │                                    │──────────────────────────>│
+       │                                    │                           │
+       │  5. Redirected to auth server    │                           │
+       │     (spinning page shown)         │                           │
+       │<──────────────────────────────────┤                           │
+       │                                    │                           │
+       │  6. Extract request_id from       │                           │
+       │     window.authRequest             │                           │
+       │                                    │                           │
+       │  7. POST /api/agent/authenticate  │                           │
+       │     { request_id, agent_id,        │                           │
+       │       agent_secret, model }        │                           │
+       │──────────────────────────────────────────────────────────────>│
+       │                                    │                           │
+       │                                    │  8. Verify credentials     │
+       │                                    │     (PBKDF2 hash check)   │
+       │                                    │                           │
+       │  9. Authentication success        │                           │
+       │<──────────────────────────────────────────────────────────────┤
+       │                                    │                           │
+       │ 10. Spinning page polls status    │                           │
+       │     GET /api/check-status?         │                           │
+       │     request_id=...                 │                           │
+       │──────────────────────────────────────────────────────────────>│
+       │                                    │                           │
+       │ 11. Status: "authenticated"        │                           │
+       │<──────────────────────────────────────────────────────────────┤
+       │                                    │                           │
+       │ 12. Auto-redirect to callback     │                           │
+       │     with authorization code        │                           │
+       │──────────────────────────────────>│                           │
+       │                                    │                           │
+       │                                    │  13. POST /token          │
+       │                                    │     { code, code_verifier, │
+       │                                    │       client_id, secret }   │
+       │                                    │──────────────────────────>│
+       │                                    │                           │
+       │                                    │  14. Validate PKCE         │
+       │                                    │     (SHA-256 verify)       │
+       │                                    │                           │
+       │                                    │  15. Generate JWT &        │
+       │                                    │      refresh token         │
+       │                                    │                           │
+       │                                    │  16. Return tokens         │
+       │                                    │<──────────────────────────┤
+       │                                    │                           │
+       │  17. Store tokens in              │                           │
+       │     localStorage                   │                           │
+       │                                    │                           │
+       │  18. Redirect to dashboard        │                           │
+       │     (authenticated!)               │                           │
+       │<──────────────────────────────────┤                           │
+       │                                    │                           │
+```
+
+### Key Differences from Traditional OAuth
 
 **Traditional OAuth (for humans):**
-```
 1. User clicks "Sign in"
 2. User redirected to auth server
-3. User enters credentials manually
-4. User approves consent screen
+3. **User enters credentials manually** ❌
+4. **User approves consent screen** ❌
 5. User redirected back with code
-```
 
 **Auth Agent (for AI):**
-```
 1. AI Agent clicks "Sign in" (automated)
 2. Browser redirected to auth server
-3. AI Agent detects auth page
-4. AI Agent POSTs credentials via API
+3. **Agent detects auth page programmatically** ✅
+4. **Agent POSTs credentials via API** ✅
 5. Browser auto-redirects back with code
-```
 
-### Complete Flow
-
-```
-┌──────────────┐         ┌─────────────┐         ┌──────────────┐
-│  AI Agent    │         │  Website    │         │ Auth Server  │
-│  (Browser)   │         │             │         │              │
-└──────┬───────┘         └──────┬──────┘         └──────┬───────┘
-       │                        │                       │
-       │ Navigate to website    │                       │
-       │───────────────────────>│                       │
-       │                        │                       │
-       │ Click "Sign in"        │                       │
-       │───────────────────────>│                       │
-       │                        │                       │
-       │ Redirect to /authorize │                       │
-       │<───────────────────────┤                       │
-       │                        │                       │
-       │ GET /authorize         │                       │
-       │────────────────────────────────────────────────>│
-       │                        │                       │
-       │ Return spinning page   │                       │
-       │<────────────────────────────────────────────────┤
-       │                        │                       │
-       │ Extract request_id     │                       │
-       │ POST /api/agent/authenticate                   │
-       │────────────────────────────────────────────────>│
-       │                        │                       │
-       │ Success                │                       │
-       │<────────────────────────────────────────────────┤
-       │                        │                       │
-       │ Page auto-redirects    │                       │
-       │ GET /callback?code=... │                       │
-       │───────────────────────>│                       │
-       │                        │                       │
-       │                        │ POST /token           │
-       │                        │──────────────────────>│
-       │                        │                       │
-       │                        │ Return access token   │
-       │                        │<──────────────────────┤
-       │                        │                       │
-       │ Logged in!             │                       │
-       │<───────────────────────┤                       │
-```
-
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. Install Dependencies
 
@@ -99,13 +186,18 @@ cp .env.example .env
 # See Configuration section below for details
 ```
 
-### 3. Start the Server
+### 3. Deploy to Convex
 
 ```bash
-npm run dev
-```
+# Install Convex CLI if you haven't
+npm install -g convex
 
-Server will start on `http://localhost:3000`
+# Login to Convex
+npx convex login
+
+# Deploy
+npx convex deploy
+```
 
 ### 4. Seed Test Data
 
@@ -126,7 +218,14 @@ npm test
 
 Runs a complete OAuth flow simulation.
 
-## API Endpoints
+## 📚 Documentation
+
+- **[SDK Documentation](./sdk/README.md)** - Client and agent SDKs
+- **[Browser-Use Integration](./examples/browser-use-integration/README.md)** - AI agent authentication examples
+- **[Demo Websites](./websites/README.md)** - Three integrated demo websites
+- **[Hackathon Pitch Guide](./HACKATHON_PITCH.md)** - Presentation materials
+
+## 🔌 API Endpoints
 
 ### Public OAuth Endpoints
 
@@ -167,7 +266,7 @@ Exchange authorization code for tokens, or refresh access token.
 ```
 
 #### `POST /introspect`
-Validate and get information about a token.
+Validate and get information about a token (RFC 7662).
 
 ```json
 {
@@ -179,7 +278,7 @@ Validate and get information about a token.
 ```
 
 #### `POST /revoke`
-Revoke an access or refresh token.
+Revoke an access or refresh token (RFC 7009).
 
 ```json
 {
@@ -213,14 +312,12 @@ Check if agent has completed authentication (used by spinning page polling).
 ### Admin Endpoints
 
 #### Agents
-
 - `POST /api/admin/agents` - Create new agent
 - `GET /api/admin/agents` - List all agents
 - `GET /api/admin/agents/:id` - Get agent details
 - `DELETE /api/admin/agents/:id` - Delete agent
 
 #### Clients
-
 - `POST /api/admin/clients` - Create new client
 - `GET /api/admin/clients` - List all clients
 - `GET /api/admin/clients/:id` - Get client details
@@ -229,10 +326,10 @@ Check if agent has completed authentication (used by spinning page polling).
 
 ### Discovery Endpoints
 
-- `GET /.well-known/oauth-authorization-server` - OAuth server metadata
+- `GET /.well-known/oauth-authorization-server` - OAuth server metadata (RFC 8414)
 - `GET /.well-known/jwks.json` - JSON Web Key Set
 
-## Configuration
+## ⚙️ Configuration
 
 ### Environment Variables
 
@@ -272,99 +369,104 @@ CONVEX_SITE_URL=https://your-project.convex.site
 AGENTMAIL_API_KEY=your-agentmail-api-key  # Optional, for 2FA
 ```
 
-## Security Features
+## 🔒 Security Features
 
 ### PKCE (Proof Key for Code Exchange)
 OAuth 2.1 **requires** PKCE for all authorization code flows. This prevents authorization code interception attacks.
 
+- Code verifier: Random 128-character string
+- Code challenge: SHA-256 hash of verifier
+- Method: S256 (SHA-256)
+
 ### Credential Hashing
-All secrets (agent_secret, client_secret) are hashed with bcrypt before storage.
+All secrets (agent_secret, client_secret) are hashed with PBKDF2 before storage. Original secrets are never stored in the database.
 
 ### JWT Tokens
-Access tokens are JWTs signed with HS256, enabling stateless validation.
+Access tokens are JWTs signed with HS256, enabling stateless validation. Tokens include:
+- `sub` - Agent ID
+- `client_id` - OAuth client identifier
+- `model` - AI model type
+- `scope` - Granted permissions
+- `iat` - Issued at timestamp
+- `exp` - Expiration timestamp
 
 ### Opaque Refresh Tokens
-Refresh tokens are random strings stored in the database, allowing easy revocation.
+Refresh tokens are random strings stored in the database, allowing easy revocation and token rotation.
 
 ### Request Expiration
 Authorization requests expire after 10 minutes to prevent replay attacks.
 
-## Project Structure
+### HTTPS Enforcement
+All redirect URIs must use HTTPS (except `localhost` for development).
+
+## 📁 Project Structure
 
 ```
-src/
-├── db/
-│   ├── types.ts          # TypeScript types
-│   └── store.ts          # In-memory database
-├── lib/
-│   ├── constants.ts      # Configuration
-│   ├── crypto.ts         # Hashing, PKCE, token generation
-│   ├── jwt.ts            # JWT utilities
-│   └── validation.ts     # Input validation
-├── templates/
-│   ├── spinningPage.ts   # Authorization page
-│   └── errorPage.ts      # Error page
-├── oauth/
-│   ├── authorize.ts      # GET /authorize
-│   ├── agentAuth.ts      # POST /api/agent/authenticate
-│   ├── checkStatus.ts    # GET /api/check-status
-│   ├── token.ts          # POST /token
-│   ├── introspect.ts     # POST /introspect
-│   ├── revoke.ts         # POST /revoke
-│   └── discovery.ts      # /.well-known/*
-├── admin/
-│   ├── agents.ts         # Agent management
-│   └── clients.ts        # Client management
-└── index.ts              # Main server
+Auth_Agent/
+├── convex/                    # Convex serverless backend
+│   ├── actions/              # Node.js runtime actions (crypto)
+│   ├── lib/                  # Shared utilities
+│   ├── templates/            # HTML templates (spinning page, errors)
+│   ├── http.ts              # HTTP router (OAuth endpoints)
+│   ├── oauth.ts             # OAuth mutations/queries
+│   ├── admin.ts             # Admin endpoints
+│   └── schema.ts            # Database schema
+├── sdk/                      # SDKs for integration
+│   ├── agent/               # AI Agent SDKs (TypeScript & Python)
+│   ├── client/              # Client SDK (React components, TypeScript)
+│   └── server/              # Server SDK (TypeScript)
+├── examples/                 # Integration examples
+│   └── browser-use-integration/  # Browser-use agent examples
+├── websites/                 # Demo websites
+│   ├── v0-github-clone-with-sign-in/
+│   ├── v0-crypto-exchange-dashboard/
+│   └── v0-e-commerce-website/
+├── scripts/                  # Utility scripts
+│   ├── create-agent-credentials.js
+│   ├── create-*-client.js/py
+│   └── seed.ts
+├── logo/                     # Branding assets
+├── demo/                     # Video demonstrations
+└── README.md                 # This file
 ```
 
-## Future Enhancements
+## 🌟 Demo Websites
 
-### 2FA with AgentMail (Optional)
-Add email-based 2FA for additional security:
+Three fully integrated demo websites showcase Auth Agent authentication:
 
-1. Agent sends credentials
-2. Server sends OTP to agent's AgentMail inbox
-3. Agent reads email via API
-4. Agent submits OTP
-5. Server issues tokens
+1. **GitHub Clone** - Repository dashboard with Auth Agent sign-in
+2. **Crypto Exchange** - Trading platform authentication
+3. **E-commerce** - Store management dashboard
 
-### Database Migration
-Replace in-memory store with:
-- **Convex** (serverless, real-time)
-- **PostgreSQL** (traditional relational)
-- **MongoDB** (document store)
+Each includes:
+- ✅ Auth Agent OAuth 2.1 sign-in button
+- ✅ Callback handler for OAuth redirect
+- ✅ Token exchange API route
+- ✅ Session storage (localStorage for demo)
+- ✅ Protected dashboard routes
 
-### Additional Features
-- Rate limiting
-- Audit logs
-- Admin dashboard UI
-- Multiple scope support
-- Client registration API
-- Webhook notifications
+See [websites/README.md](./websites/README.md) for setup instructions.
 
-## Development
+## 🤝 Contributing
 
-### Run in Development Mode
-```bash
-npm run dev
-```
+Contributions welcome! This project is designed to standardize AI agent authentication across the web.
 
-### Build for Production
-```bash
-npm run build
-npm start
-```
-
-### Run Tests
-```bash
-npm test
-```
-
-## License
+## 📄 License
 
 MIT
 
-## Support
+## 🔗 Links
 
-For issues and questions, please visit: https://github.com/your-org/auth-agent
+- **Repository**: https://github.com/hetpatel-11/Auth_Agent
+- **Live Demo**: https://clever-pika-819.convex.site
+- **Convex Dashboard**: https://dashboard.convex.dev
+
+---
+
+<div align="center">
+
+**Built with ❤️ for the AI agent community**
+
+Standardizing authentication, one agent at a time.
+
+</div>
