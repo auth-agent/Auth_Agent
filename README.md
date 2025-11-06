@@ -83,83 +83,48 @@ Full OAuth flow on GitHub-style repository dashboard.
 
 ## 🔄 Complete OAuth 2.1 Workflow
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          AUTH AGENT OAUTH 2.1 FLOW                          │
-└─────────────────────────────────────────────────────────────────────────────┘
+sequenceDiagram
+    participant Agent as AI Agent<br/>(browser-use)
+    participant Website as Website<br/>(Next.js)
+    participant AuthServer as Auth Server<br/>(Cloudflare Workers)
 
-┌──────────────┐                    ┌─────────────┐              ┌──────────────┐
-│  AI Agent    │                    │  Website    │              │ Auth Server  │
-│ (browser-use)│                    │  (Next.js)  │              │  (Cloudflare │
-│              │                    │             │              │   Workers)   │
-└──────┬───────┘                    └──────┬──────┘              └──────┬───────┘
-       │                                    │                           │
-       │  1. Navigate to website           │                           │
-       │──────────────────────────────────>│                           │
-       │                                    │                           │
-       │  2. Click "Sign in with           │                           │
-       │     Auth Agent" button            │                           │
-       │──────────────────────────────────>│                           │
-       │                                    │                           │
-       │                                    │  3. Generate PKCE        │
-       │                                    │     (code_verifier,       │
-       │                                    │      code_challenge)     │
-       │                                    │                           │
-       │                                    │  4. Redirect to /authorize│
-       │                                    │──────────────────────────>│
-       │                                    │                           │
-       │  5. Redirected to auth server    │                           │
-       │     (spinning page shown)         │                           │
-       │<──────────────────────────────────┤                           │
-       │                                    │                           │
-       │  6. Extract request_id from       │                           │
-       │     window.authRequest             │                           │
-       │                                    │                           │
-       │  7. POST /api/agent/authenticate  │                           │
-       │     { request_id, agent_id,        │                           │
-       │       agent_secret, model }        │                           │
-       │──────────────────────────────────────────────────────────────>│
-       │                                    │                           │
-       │                                    │  8. Verify credentials     │
-       │                                    │     (PBKDF2 hash check)   │
-       │                                    │                           │
-       │  9. Authentication success        │                           │
-       │<──────────────────────────────────────────────────────────────┤
-       │                                    │                           │
-       │ 10. Spinning page polls status    │                           │
-       │     GET /api/check-status?         │                           │
-       │     request_id=...                 │                           │
-       │──────────────────────────────────────────────────────────────>│
-       │                                    │                           │
-       │ 11. Status: "authenticated"        │                           │
-       │<──────────────────────────────────────────────────────────────┤
-       │                                    │                           │
-       │ 12. Auto-redirect to callback     │                           │
-       │     with authorization code        │                           │
-       │──────────────────────────────────>│                           │
-       │                                    │                           │
-       │                                    │  13. POST /token          │
-       │                                    │     { code, code_verifier, │
-       │                                    │       client_id, secret }   │
-       │                                    │──────────────────────────>│
-       │                                    │                           │
-       │                                    │  14. Validate PKCE         │
-       │                                    │     (SHA-256 verify)       │
-       │                                    │                           │
-       │                                    │  15. Generate JWT &        │
-       │                                    │      refresh token         │
-       │                                    │                           │
-       │                                    │  16. Return tokens         │
-       │                                    │<──────────────────────────┤
-       │                                    │                           │
-       │  17. Store tokens in              │                           │
-       │     localStorage                   │                           │
-       │                                    │                           │
-       │  18. Redirect to dashboard        │                           │
-       │     (authenticated!)               │                           │
-       │<──────────────────────────────────┤                           │
-       │                                    │                           │
-```
+    Note over Agent,AuthServer: Auth Agent OAuth 2.1 Flow
+
+    Agent->>Website: 1. Navigate to website
+    Agent->>Website: 2. Click "Sign in with<br/>Auth Agent" button
+    
+    Note over Website: 3. Generate PKCE<br/>(code_verifier, code_challenge)
+    
+    Website->>AuthServer: 4. Redirect to /authorize<br/>(with PKCE challenge)
+    
+    AuthServer->>Agent: 5. Return spinning page<br/>(shows "Authenticating AI Agent")
+    
+    Note over Agent: 6. Extract request_id<br/>from window.authRequest
+    
+    Agent->>AuthServer: 7. POST /api/agent/authenticate<br/>{ request_id, agent_id,<br/>agent_secret, model }
+    
+    Note over AuthServer: 8. Verify credentials<br/>(PBKDF2 hash check)
+    
+    AuthServer->>Agent: 9. Authentication success
+    
+    loop Polling for completion
+        Agent->>AuthServer: 10. GET /api/check-status?<br/>request_id=...
+        AuthServer->>Agent: 11. Status: "authenticated"
+    end
+    
+    Agent->>Website: 12. Auto-redirect to callback<br/>(with authorization code)
+    
+    Website->>AuthServer: 13. POST /token<br/>{ code, code_verifier,<br/>client_id, secret }
+    
+    Note over AuthServer: 14. Validate PKCE<br/>(SHA-256 verify)
+    Note over AuthServer: 15. Generate JWT &<br/>refresh token
+    
+    AuthServer->>Website: 16. Return tokens<br/>{ access_token, refresh_token }
+    
+    Note over Website: 17. Store tokens in<br/>localStorage
+    
+    Website->>Agent: 18. Redirect to dashboard<br/>(authenticated!)
+
 
 ### Key Differences from Traditional OAuth
 
@@ -348,7 +313,7 @@ Check if agent has completed authentication (used by spinning page polling).
 
 Environment variable templates (`.env.example`) are provided for:
 - **Root directory** - Auth Agent server configuration (Cloudflare Workers, Supabase, JWT)
-- **`Profilio/`** - Website integration example with OAuth client credentials
+- **`website-integration-example/`** - Website integration example with OAuth client credentials
 - **`examples/browser-use-integration/`** - AI agent credentials (AGENT_ID, AGENT_SECRET, etc.)
 
 To get started:
@@ -361,8 +326,8 @@ To get started:
    # For browser-use examples
    cp examples/browser-use-integration/.env.example examples/browser-use-integration/.env
 
-   # For Profilio website integration (use .env.local for Next.js)
-   cp Profilio/.env.example Profilio/.env.local
+   # For website integration example (use .env.local for Next.js)
+   cp website-integration-example/.env.example website-integration-example/.env.local
    ```
 
 2. **Fill in your actual credentials** in the `.env` file
@@ -427,8 +392,8 @@ Auth_Agent/
 │   └── server/              # Server SDK (TypeScript)
 ├── examples/                 # Integration examples
 │   └── browser-use-integration/  # Browser-use agent examples
-├── Profilio/                 # Website integration example
-│   └── src/                 # Next.js app with Auth Agent integration
+├── website-integration-example/  # Website integration example
+│   └── src/                     # Next.js app with Auth Agent integration
 ├── scripts/                  # Utility scripts
 │   ├── create-agent-credentials.js
 │   └── create-*-client.js/py
@@ -440,7 +405,7 @@ Auth_Agent/
 
 ## 🌟 Website Integration Example
 
-**Profilio** - A fully integrated Next.js website showcasing Auth Agent authentication:
+A fully integrated Next.js website showcasing Auth Agent authentication:
 
 Includes:
 - ✅ Auth Agent OAuth 2.1 sign-in button
@@ -450,7 +415,7 @@ Includes:
 - ✅ Protected dashboard routes
 - ✅ Supabase integration for user data
 
-See [Profilio/README.md](./Profilio/README.md) for setup instructions.
+See [website-integration-example/README.md](./website-integration-example/README.md) for setup instructions.
 
 ## 🤝 Contributing
 
