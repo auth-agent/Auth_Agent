@@ -52,10 +52,11 @@ Full OAuth flow on GitHub-style repository dashboard.
 ## 🛠️ Tech Stack
 
 ### Backend & Infrastructure
-- **[Convex](https://convex.dev)** - Serverless backend, database, and HTTP functions
+- **[Cloudflare Workers](https://workers.cloudflare.com/)** - Edge serverless platform for OAuth endpoints
+- **[Supabase](https://supabase.com/)** - PostgreSQL database for storing clients, agents, and tokens
+- **[Hono](https://hono.dev/)** - Fast web framework for Cloudflare Workers
 - **[TypeScript](https://www.typescriptlang.org/)** - Type-safe development
-- **[Node.js](https://nodejs.org/)** - Runtime for crypto operations
-- **[JWT](https://jwt.io/)** - JSON Web Tokens for stateless authentication
+- **[JWT (jose)](https://github.com/panva/jose)** - JSON Web Tokens for stateless authentication
 
 ### Frontend & Client SDKs
 - **[Next.js](https://nextjs.org/)** - React framework for demo websites
@@ -64,17 +65,15 @@ Full OAuth flow on GitHub-style repository dashboard.
 - **[Tailwind CSS](https://tailwindcss.com/)** - Styling for demo websites
 
 ### AI Agent Integration
-- **[Python](https://www.python.org/)** - Agent SDK and browser automation
-- **[browser-use](https://browser-use.com/)** - Browser automation framework
+- **[Python](https://www.python.org/)** - Agent SDK
 - **[aiohttp](https://docs.aiohttp.org/)** - Async HTTP client for agents
 
 ### Database & Storage
-- **[Convex Database](https://convex.dev)** - Serverless, real-time database
-- **[Supabase](https://supabase.com/)** - Used in Profilio integration demo
+- **[Supabase (PostgreSQL)](https://supabase.com/)** - Primary database with row-level security
 
 ### Deployment
 - **[Vercel](https://vercel.com/)** - Frontend deployment (demo websites)
-- **[Convex Cloud](https://convex.dev)** - Backend deployment (serverless)
+- **[Cloudflare Workers](https://workers.cloudflare.com/)** - Backend deployment (edge network)
 
 ### Security & Cryptography
 - **PBKDF2** - Password hashing for secrets
@@ -88,7 +87,7 @@ Full OAuth flow on GitHub-style repository dashboard.
 sequenceDiagram
     participant Agent as AI Agent<br/>(browser-use)
     participant Website as Website<br/>(Next.js)
-    participant AuthServer as Auth Server<br/>(Convex)
+    participant AuthServer as Auth Server<br/>(Cloudflare Workers)
 
     Note over Agent,AuthServer: Auth Agent OAuth 2.1 Flow
 
@@ -146,7 +145,7 @@ graph TB
         TokenExchange[🔐 Token Exchange API<br/>/api/auth-agent/exchange]
     end
 
-    subgraph "Auth Agent Server (Convex)"
+    subgraph "Auth Agent Server (Cloudflare Workers + Supabase)"
         subgraph "HTTP Endpoints"
             Authorize[/authorize<br/>GET - OAuth Authorization]
             Token[/token<br/>POST - Token Exchange]
@@ -157,20 +156,20 @@ graph TB
             Discovery[/.well-known/oauth-authorization-server<br/>GET - OAuth Discovery]
         end
 
-        subgraph "Crypto Actions (Node.js)"
-            PBKDF2Hash[🔒 PBKDF2 Hashing<br/>hashSecretAction]
-            PBKDF2Verify[✅ Secret Verification<br/>verifySecretAction]
-            PKCEValidate[🔑 PKCE Validation<br/>validatePKCEAction]
-            JWTGenerate[🎫 JWT Generation<br/>generateJWTAction]
-            RandomGen[🎲 Secure Random<br/>generateSecureRandomAction]
+        subgraph "Crypto Functions (jose)"
+            PBKDF2Hash[🔒 PBKDF2 Hashing<br/>hashSecret]
+            PBKDF2Verify[✅ Secret Verification<br/>verifySecret]
+            PKCEValidate[🔑 PKCE Validation<br/>validatePKCE]
+            JWTGenerate[🎫 JWT Generation<br/>generateJWT]
+            RandomGen[🎲 Secure Random<br/>generateSecureRandom]
         end
 
-        subgraph "Database (Convex)"
-            AuthRequests[(📋 Auth Requests<br/>code_challenge, state)]
-            AuthCodes[(🔐 Authorization Codes<br/>code, request_id)]
-            Tokens[(🎫 Tokens<br/>access_token, refresh_token)]
-            Agents[(🤖 Agents<br/>agent_id, agent_secret_hash)]
-            Clients[(🌐 Clients<br/>client_id, client_secret_hash)]
+        subgraph "Database (Supabase PostgreSQL)"
+            AuthRequests[(📋 auth_requests<br/>code_challenge, state)]
+            AuthCodes[(🔐 authorization_codes<br/>code, request_id)]
+            Tokens[(🎫 tokens<br/>access_token, refresh_token)]
+            Agents[(🤖 agents<br/>agent_id, agent_secret_hash)]
+            Clients[(🌐 clients<br/>client_id, client_secret_hash)]
         end
 
         subgraph "Templates"
@@ -256,19 +255,15 @@ graph TB
         end
     end
 
-    subgraph "Backend Layer (Convex)"
+    subgraph "Backend Layer (Cloudflare Workers + Supabase)"
         subgraph "HTTP Functions"
             OAuthEndpoints[🔐 OAuth Endpoints<br/>15+ Routes]
             AdminEndpoints[⚙️ Admin Endpoints<br/>Agent/Client Mgmt]
             DiscoveryEndpoints[📋 Discovery<br/>.well-known]
         end
 
-        subgraph "Serverless Actions"
-            CryptoActions[🔒 Crypto Actions<br/>Node.js Runtime]
-        end
-
         subgraph "Database"
-            ConvexDB[(🗄️ Convex Database<br/>Real-time)]
+            SupabaseDB[(🗄️ Supabase PostgreSQL<br/>Real-time)]
         end
 
         subgraph "Security"
@@ -280,7 +275,8 @@ graph TB
 
     subgraph "Deployment"
         Vercel[▲ Vercel<br/>Website Hosting]
-        ConvexCloud[☁️ Convex Cloud<br/>Serverless Backend]
+        CloudflareNetwork[☁️ Cloudflare Workers<br/>Edge Network]
+        SupabaseCloud[🗄️ Supabase<br/>PostgreSQL Database]
     end
 
     subgraph "Technologies"
@@ -306,20 +302,19 @@ graph TB
     TSAgentSDK --> OAuthEndpoints
 
     %% Backend connections
-    OAuthEndpoints --> CryptoActions
-    AdminEndpoints --> ConvexDB
-    OAuthEndpoints --> ConvexDB
-    CryptoActions --> PBKDF2
-    CryptoActions --> PKCE
-    CryptoActions --> JWT
+    AdminEndpoints --> SupabaseDB
+    OAuthEndpoints --> SupabaseDB
+    OAuthEndpoints --> PBKDF2
+    OAuthEndpoints --> PKCE
+    OAuthEndpoints --> JWT
 
     %% Deployment
     GitHub --> Vercel
     Crypto --> Vercel
     Ecommerce --> Vercel
-    OAuthEndpoints --> ConvexCloud
-    AdminEndpoints --> ConvexCloud
-    ConvexDB --> ConvexCloud
+    OAuthEndpoints --> CloudflareNetwork
+    AdminEndpoints --> CloudflareNetwork
+    SupabaseDB --> SupabaseCloud
 
     %% Technology usage
     GitHub --> NextJS
@@ -341,8 +336,8 @@ graph TB
 
     class GitHub,Crypto,Ecommerce,ReactSDK,TypeScriptSDK frontendClass
     class BrowserUse,Puppeteer,Selenium,PythonSDK,TSAgentSDK agentClass
-    class OAuthEndpoints,AdminEndpoints,DiscoveryEndpoints,CryptoActions,ConvexDB backendClass
-    class Vercel,ConvexCloud deployClass
+    class OAuthEndpoints,AdminEndpoints,DiscoveryEndpoints,SupabaseDB backendClass
+    class Vercel,CloudflareNetwork,SupabaseCloud deployClass
     class TypeScript,NodeJS,Python,React,NextJS techClass
     class PBKDF2,PKCE,JWT securityClass
 ```
@@ -383,17 +378,17 @@ cp .env.example .env
 # See Configuration section below for details
 ```
 
-### 3. Deploy to Convex
+### 3. Deploy to Cloudflare Workers
 
 ```bash
-# Install Convex CLI if you haven't
-npm install -g convex
+# Install Wrangler CLI if you haven't
+npm install -g wrangler
 
-# Login to Convex
-npx convex login
+# Login to Cloudflare
+npx wrangler login
 
 # Deploy
-npx convex deploy
+npx wrangler deploy
 ```
 
 ### 4. Seed Test Data
@@ -533,9 +528,9 @@ Check if agent has completed authentication (used by spinning page polling).
 **Important:** All `.env*` files are gitignored for security. Never commit actual credentials to the repository.
 
 Environment variable templates (`.env.example`) are provided for:
-- **Root directory** - Auth Agent server configuration (Convex, JWT)
+- **Root directory** - Auth Agent server configuration (Cloudflare Workers, Supabase, JWT)
+- **`Profilio/`** - Website integration example with OAuth client credentials
 - **`examples/browser-use-integration/`** - AI agent credentials (AGENT_ID, AGENT_SECRET, etc.)
-- **Demo websites** - OAuth client credentials for each website
 
 To get started:
 
@@ -546,9 +541,9 @@ To get started:
    
    # For browser-use examples
    cp examples/browser-use-integration/.env.example examples/browser-use-integration/.env
-   
-   # For demo websites (use .env.local for Next.js)
-   cp websites/v0-github-clone-with-sign-in/.env.example websites/v0-github-clone-with-sign-in/.env.local
+
+   # For Profilio website integration (use .env.local for Next.js)
+   cp Profilio/.env.example Profilio/.env.local
    ```
 
 2. **Fill in your actual credentials** in the `.env` file
@@ -557,13 +552,14 @@ To get started:
 
 ### Server Environment Variables
 
-For the Convex server, configure these variables in your Convex dashboard:
+For the Cloudflare Workers server, configure these variables in your `wrangler.toml` and Cloudflare dashboard:
 
 ```env
 JWT_SECRET=your-secret-key-change-in-production
 JWT_ISSUER=auth-agent.com
-CONVEX_SITE_URL=https://your-project.convex.site
-AGENTMAIL_API_KEY=your-agentmail-api-key  # Optional, for 2FA
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 ```
 
 ## 🔒 Security Features
@@ -600,49 +596,42 @@ All redirect URIs must use HTTPS (except `localhost` for development).
 
 ```
 Auth_Agent/
-├── convex/                    # Convex serverless backend
-│   ├── actions/              # Node.js runtime actions (crypto)
-│   ├── lib/                  # Shared utilities
-│   ├── templates/            # HTML templates (spinning page, errors)
-│   ├── http.ts              # HTTP router (OAuth endpoints)
-│   ├── oauth.ts             # OAuth mutations/queries
-│   ├── admin.ts             # Admin endpoints
-│   └── schema.ts            # Database schema
+├── src/                      # Cloudflare Workers backend
+│   ├── index.ts             # Main Hono router (OAuth endpoints)
+│   ├── routes/              # OAuth route handlers
+│   ├── db/                  # Supabase database client
+│   ├── lib/                 # Shared utilities (crypto, JWT)
+│   └── templates/           # HTML templates (spinning page, errors)
 ├── sdk/                      # SDKs for integration
 │   ├── agent/               # AI Agent SDKs (TypeScript & Python)
 │   ├── client/              # Client SDK (React components, TypeScript)
 │   └── server/              # Server SDK (TypeScript)
 ├── examples/                 # Integration examples
 │   └── browser-use-integration/  # Browser-use agent examples
-├── websites/                 # Demo websites
-│   ├── v0-github-clone-with-sign-in/
-│   ├── v0-crypto-exchange-dashboard/
-│   └── v0-e-commerce-website/
+├── Profilio/                 # Website integration example
+│   └── src/                 # Next.js app with Auth Agent integration
 ├── scripts/                  # Utility scripts
 │   ├── create-agent-credentials.js
-│   ├── create-*-client.js/py
-│   └── seed.ts
+│   └── create-*-client.js/py
 ├── logo/                     # Branding assets
 ├── demo/                     # Video demonstrations
+├── wrangler.toml            # Cloudflare Workers configuration
 └── README.md                 # This file
 ```
 
-## 🌟 Demo Websites
+## 🌟 Website Integration Example
 
-Three fully integrated demo websites showcase Auth Agent authentication:
+**Profilio** - A fully integrated Next.js website showcasing Auth Agent authentication:
 
-1. **GitHub Clone** - Repository dashboard with Auth Agent sign-in
-2. **Crypto Exchange** - Trading platform authentication
-3. **E-commerce** - Store management dashboard
-
-Each includes:
+Includes:
 - ✅ Auth Agent OAuth 2.1 sign-in button
 - ✅ Callback handler for OAuth redirect
 - ✅ Token exchange API route
-- ✅ Session storage (localStorage for demo)
+- ✅ Session storage with httpOnly cookies
 - ✅ Protected dashboard routes
+- ✅ Supabase integration for user data
 
-See [websites/README.md](./websites/README.md) for setup instructions.
+See [Profilio/README.md](./Profilio/README.md) for setup instructions.
 
 ## 🤝 Contributing
 
@@ -654,9 +643,10 @@ MIT
 
 ## 🔗 Links
 
-- **Repository**: https://github.com/hetpatel-11/Auth_Agent
-- **Live Demo**: https://api.auth-agent.com
-- **Convex Dashboard**: https://dashboard.convex.dev
+- **Repository**: https://github.com/auth-agent/auth-agent
+- **Live API**: https://api.auth-agent.com
+- **Cloudflare Dashboard**: https://dash.cloudflare.com
+- **Supabase Dashboard**: https://supabase.com/dashboard
 
 ---
 
