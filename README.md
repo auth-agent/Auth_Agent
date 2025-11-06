@@ -442,7 +442,7 @@ MIT
 
 <div align="center">
 
-**Built with ❤️ for the AI agent community**
+**Built with ❤️ by Het Patel for the AI agent community**
 
 Standardizing authentication, one agent at a time.
 
