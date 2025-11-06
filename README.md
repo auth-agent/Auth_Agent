@@ -83,6 +83,7 @@ Full OAuth flow on GitHub-style repository dashboard.
 
 ## 🔄 Complete OAuth 2.1 Workflow
 
+```mermaid
 sequenceDiagram
     participant Agent as AI Agent<br/>(browser-use)
     participant Website as Website<br/>(Next.js)
@@ -124,7 +125,7 @@ sequenceDiagram
     Note over Website: 17. Store tokens in<br/>localStorage
     
     Website->>Agent: 18. Redirect to dashboard<br/>(authenticated!)
-
+```
 
 ### Key Differences from Traditional OAuth
 
@@ -312,22 +313,25 @@ Check if agent has completed authentication (used by spinning page polling).
 **Important:** All `.env*` files are gitignored for security. Never commit actual credentials to the repository.
 
 Environment variable templates (`.env.example`) are provided for:
-- **Root directory** - Auth Agent server configuration (Cloudflare Workers, Supabase, JWT)
+- **`Auth_Agent/workers/`** - Auth Agent server configuration (Cloudflare Workers, Supabase, JWT)
 - **`website-integration-example/`** - Website integration example with OAuth client credentials
-- **`examples/browser-use-integration/`** - AI agent credentials (AGENT_ID, AGENT_SECRET, etc.)
+- **`Auth_Agent/examples/browser-use-integration/`** - AI agent credentials (AGENT_ID, AGENT_SECRET, etc.)
 
 To get started:
 
 1. **Copy the relevant `.env.example` file to `.env` (or `.env.local` for Next.js projects):**
    ```bash
-   # For the server
+   # For the Cloudflare Workers server
+   cd Auth_Agent/workers
    cp .env.example .env
-   
+
    # For browser-use examples
-   cp examples/browser-use-integration/.env.example examples/browser-use-integration/.env
+   cd Auth_Agent/examples/browser-use-integration
+   cp .env.example .env
 
    # For website integration example (use .env.local for Next.js)
-   cp website-integration-example/.env.example website-integration-example/.env.local
+   cd website-integration-example
+   cp .env.example .env.local
    ```
 
 2. **Fill in your actual credentials** in the `.env` file
@@ -379,28 +383,30 @@ All redirect URIs must use HTTPS (except `localhost` for development).
 ## 📁 Project Structure
 
 ```
-Auth_Agent/
-├── src/                      # Cloudflare Workers backend
-│   ├── index.ts             # Main Hono router (OAuth endpoints)
-│   ├── routes/              # OAuth route handlers
-│   ├── db/                  # Supabase database client
-│   ├── lib/                 # Shared utilities (crypto, JWT)
-│   └── templates/           # HTML templates (spinning page, errors)
-├── sdk/                      # SDKs for integration
-│   ├── agent/               # AI Agent SDKs (TypeScript & Python)
-│   ├── client/              # Client SDK (React components, TypeScript)
-│   └── server/              # Server SDK (TypeScript)
-├── examples/                 # Integration examples
-│   └── browser-use-integration/  # Browser-use agent examples
+Auth_Agent_YC/
+├── Auth_Agent/               # Main Auth Agent implementation
+│   ├── workers/             # Cloudflare Workers backend
+│   │   ├── src/            # Source code
+│   │   │   ├── index.ts   # Main Hono router (OAuth endpoints)
+│   │   │   ├── routes/    # OAuth route handlers
+│   │   │   ├── db/        # Supabase database client
+│   │   │   ├── lib/       # Shared utilities (crypto, JWT)
+│   │   │   └── templates/ # HTML templates (spinning page, errors)
+│   │   └── wrangler.toml  # Cloudflare Workers configuration
+│   ├── sdk/                # SDKs for integration
+│   │   ├── agent/         # AI Agent SDKs (TypeScript & Python)
+│   │   ├── client/        # Client SDK (React components, TypeScript)
+│   │   └── server/        # Server SDK (TypeScript)
+│   ├── examples/           # Integration examples
+│   │   └── browser-use-integration/  # Browser-use agent examples
+│   ├── scripts/            # Utility scripts
+│   │   ├── create-agent-credentials.js
+│   │   └── create-*-client.js/py
+│   └── demo/               # Video demonstrations
 ├── website-integration-example/  # Website integration example
 │   └── src/                     # Next.js app with Auth Agent integration
-├── scripts/                  # Utility scripts
-│   ├── create-agent-credentials.js
-│   └── create-*-client.js/py
-├── logo/                     # Branding assets
-├── demo/                     # Video demonstrations
-├── wrangler.toml            # Cloudflare Workers configuration
-└── README.md                 # This file
+├── logo/                    # Branding assets
+└── README.md                # This file
 ```
 
 ## 🌟 Website Integration Example
