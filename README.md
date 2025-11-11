@@ -4,14 +4,14 @@
 
 # Auth Agent - OIDC + OAuth 2.1 for AI Agents
 
-**Standardized authentication for autonomous AI agents**
+**Standardized authentication for web agents and computer using agents**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020)](https://workers.cloudflare.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ECF8E)](https://supabase.com/)
 
-A specialized OAuth 2.1 authorization server designed for autonomous AI agents. Unlike traditional OAuth flows that require human interaction, Auth Agent enables AI agents to authenticate themselves programmatically through PKCE and credential verification.
+A specialized OAuth 2.1 authorization server designed for Web Agents and Computer Using Agents. Unlike traditional OAuth flows that require human interaction, Auth Agent enables AI agents to authenticate themselves programmatically through PKCE and credential verification.
 
 </div>
 
@@ -21,20 +21,10 @@ A specialized OAuth 2.1 authorization server designed for autonomous AI agents. 
 
 Watch Auth Agent in action:
 
-### Demo 1: Profilio Integration
-AI agent authenticating on Profilio platform using browser-use.
+### Demo: Profilio Website Integration
+AI agent authenticating on Profilio platform using browser-use agent.
 
 ![Profilio Demo](./demo/gif/Profilio.gif)
-
-### Demo 2: Crypto Exchange Dashboard
-Authentication flow on crypto trading platform.
-
-![Crypto Exchange Demo](./demo/gif/Crypto_Website_Demo.gif)
-
-### Demo 3: GitHub Clone Website
-Full OAuth flow on GitHub-style repository dashboard.
-
-![GitHub Clone Demo](./demo/gif/Github_Replica_Website_Demo.gif)
 
 ## ✨ Features
 
