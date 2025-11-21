@@ -12,8 +12,6 @@ export interface AuthAgentButtonProps {
   text?: string;
   className?: string;
   scope?: string;
-  logoUrl?: string;
-  showLogo?: boolean;
   onSignInStart?: () => void;
   onError?: (error: Error) => void;
 }
@@ -26,11 +24,12 @@ export function AuthAgentButton(props: AuthAgentButtonProps) {
     text = 'Sign in with Auth Agent',
     className = '',
     scope,
-    logoUrl = 'https://auth-agent.com/logo/AA.png',
-    showLogo = true,
     onSignInStart,
     onError,
   } = props;
+
+  // Auth Agent logo - always required for branding
+  const LOGO_URL = 'https://auth-agent.com/logo/AA.png';
 
   const [loading, setLoading] = useState(false);
 
@@ -96,18 +95,16 @@ export function AuthAgentButton(props: AuthAgentButtonProps) {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {showLogo && (
-        <img
-          src={logoUrl}
-          alt="Auth Agent"
-          width={24}
-          height={24}
-          style={{
-            objectFit: 'contain',
-            display: 'block',
-          }}
-        />
-      )}
+      <img
+        src={LOGO_URL}
+        alt="Auth Agent"
+        width={24}
+        height={24}
+        style={{
+          objectFit: 'contain',
+          display: 'block',
+        }}
+      />
       <span>{loading ? 'Redirecting...' : text}</span>
     </button>
   );
