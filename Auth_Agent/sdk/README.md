@@ -162,6 +162,8 @@ import { AuthAgentButton } from 'auth-agent-sdk/client/react';
 - `text` - Button text (default: "Sign in with Auth Agent")
 - `className` - Custom CSS class
 - `scope` - Optional OAuth scope (default: "openid profile")
+- `logoUrl` - URL for the Auth Agent logo (default: `https://auth-agent.com/logo/AA.png`)
+- `showLogo` - Whether to show the logo (default: `true`)
 - `onSignInStart` - Called when sign-in starts (before redirect)
 - `onError` - Called on error during sign-in
 
