@@ -47,8 +47,8 @@ export default function LoginPage() {
     <AuthAgentButton
       clientId="your_client_id"
       redirectUri="https://yoursite.com/callback"
-      onSuccess={(tokens) => {
-        console.log('Authenticated!', tokens);
+      onSignInStart={() => {
+        console.log('Starting authentication...');
       }}
       onError={(error) => {
         console.error('Auth failed:', error);
@@ -151,7 +151,6 @@ import { AuthAgentButton } from 'auth-agent-sdk/client/react';
   text="Sign in with Auth Agent" // optional
   className="custom-class" // optional
   onSignInStart={() => console.log('Starting...')}
-  onSuccess={(result) => console.log('Success!', result)}
   onError={(error) => console.error('Error:', error)}
 />
 ```
@@ -162,9 +161,9 @@ import { AuthAgentButton } from 'auth-agent-sdk/client/react';
 - `authServerUrl` - Auth Agent server URL (default: `https://api.auth-agent.com`)
 - `text` - Button text (default: "Sign in with Auth Agent")
 - `className` - Custom CSS class
-- `onSignInStart` - Called when sign-in starts
-- `onSuccess` - Called after successful callback
-- `onError` - Called on error
+- `scope` - Optional OAuth scope (default: "openid profile")
+- `onSignInStart` - Called when sign-in starts (before redirect)
+- `onError` - Called on error during sign-in
 
 ---
 
