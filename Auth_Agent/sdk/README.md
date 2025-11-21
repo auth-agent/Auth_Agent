@@ -160,12 +160,13 @@ import { AuthAgentButton } from 'auth-agent-sdk/client/react';
 - `redirectUri` - Callback URL (**required**)
 - `authServerUrl` - Auth Agent server URL (default: `https://api.auth-agent.com`)
 - `text` - Button text (default: "Sign in with Auth Agent")
-- `className` - Custom CSS class
+- `className` - Custom CSS class (can fully override default)
+- `style` - Custom inline styles (merges with defaults, allowing overrides)
 - `scope` - Optional OAuth scope (default: "openid profile")
 - `onSignInStart` - Called when sign-in starts (before redirect)
 - `onError` - Called on error during sign-in
 
-**Note:** The Auth Agent logo is always displayed for branding compliance. It cannot be hidden or replaced.
+**Note:** The Auth Agent logo is always displayed for branding compliance. It cannot be hidden or replaced. The logo loads from GitHub and includes error handling.
 
 ---
 

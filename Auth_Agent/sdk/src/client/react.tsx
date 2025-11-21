@@ -11,6 +11,7 @@ export interface AuthAgentButtonProps {
   authServerUrl?: string;
   text?: string;
   className?: string;
+  style?: React.CSSProperties;
   scope?: string;
   onSignInStart?: () => void;
   onError?: (error: Error) => void;
@@ -22,14 +23,16 @@ export function AuthAgentButton(props: AuthAgentButtonProps) {
     redirectUri,
     authServerUrl = 'https://api.auth-agent.com',
     text = 'Sign in with Auth Agent',
-    className = '',
+    className,
+    style,
     scope,
     onSignInStart,
     onError,
   } = props;
 
   // Auth Agent logo - always required for branding
-  const LOGO_URL = 'https://auth-agent.com/logo/AA.png';
+  // Using GitHub raw URL as fallback since auth-agent.com/logo doesn't exist
+  const LOGO_URL = 'https://raw.githubusercontent.com/auth-agent/auth-agent/master/logo/AA.png';
 
   const [loading, setLoading] = useState(false);
 
@@ -53,7 +56,7 @@ export function AuthAgentButton(props: AuthAgentButtonProps) {
     }
   };
 
-  const buttonStyle: React.CSSProperties = {
+  const defaultStyle: React.CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '10px',
@@ -68,6 +71,7 @@ export function AuthAgentButton(props: AuthAgentButtonProps) {
     transition: 'transform 0.2s, box-shadow 0.2s, background 0.2s',
     boxShadow: loading ? 'none' : '0 4px 12px rgba(255, 107, 53, 0.4)',
     opacity: loading ? 0.7 : 1,
+    ...style, // Allow style prop to override defaults
   };
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -90,8 +94,8 @@ export function AuthAgentButton(props: AuthAgentButtonProps) {
     <button
       onClick={handleClick}
       disabled={loading}
-      className={`auth-agent-button ${className}`}
-      style={buttonStyle}
+      className={className || 'auth-agent-button'}
+      style={defaultStyle}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -103,6 +107,11 @@ export function AuthAgentButton(props: AuthAgentButtonProps) {
         style={{
           objectFit: 'contain',
           display: 'block',
+          flexShrink: 0, // Prevent logo from shrinking
+        }}
+        onError={(e) => {
+          // Fallback if logo fails to load - log but don't break
+          console.warn('Auth Agent logo failed to load. Please ensure the logo is accessible.');
         }}
       />
       <span>{loading ? 'Redirecting...' : text}</span>
