@@ -23,7 +23,11 @@ This meant:
 **Agents are credentials, not user data.** They should:
 - Work independently of user account lifecycle
 - Persist even if the user account is deleted
-- Only be deleted when explicitly removed by the user
+- Only be deleted when **explicitly deleted by the user via the console** (not when user account is deleted)
+
+**Important distinction:**
+- ✅ **User deletes agent via console** → Agent should be deleted (this works via RLS policy)
+- ❌ **User account gets deleted** → Agents should NOT be deleted (this was the bug - CASCADE was deleting them)
 
 ## Solution
 
@@ -35,10 +39,11 @@ ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id) ON DELETE SET NU
 ```
 
 Now:
-- When a user is deleted, `user_id` is set to `NULL` (agent is "orphaned")
+- When a **user account is deleted**, `user_id` is set to `NULL` (agent is "orphaned")
 - Agent credentials remain valid and functional
 - Agent can still authenticate successfully
 - Only the console management link is lost (user can't see it in console anymore)
+- When a **user manually deletes an agent via console**, the agent is still deleted (RLS policy handles this correctly)
 
 ## Migration
 
