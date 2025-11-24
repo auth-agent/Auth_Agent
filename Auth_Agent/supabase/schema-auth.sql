@@ -2,10 +2,8 @@
 -- This extends the main schema to link agents and clients with Supabase Auth users
 
 -- Add user_id column to agents table to link with auth.users
--- IMPORTANT: Using ON DELETE SET NULL (not CASCADE) so agents persist even if user is deleted
--- Agents are credentials and should work independently of user account lifecycle
 ALTER TABLE agents
-ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL;
+ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE;
 
 -- Add user_id column to clients table to link with auth.users
 ALTER TABLE clients
@@ -80,6 +78,11 @@ USING (
     )
 );
 
+-- Service role can access all agents (for authentication endpoint)
+-- This is critical - the workers use service role to authenticate agents
+CREATE POLICY "Service role can do everything on agents" ON agents
+    FOR ALL USING (true);
+
 -- Enable RLS on clients table
 ALTER TABLE clients ENABLE ROW LEVEL SECURITY;
 
@@ -113,6 +116,10 @@ USING (
         AND user_profiles.role = 'admin'
     )
 );
+
+-- Service role can access all clients (for OAuth endpoints)
+CREATE POLICY "Service role can do everything on clients" ON clients
+    FOR ALL USING (true);
 
 -- ====================================
 -- FUNCTIONS
