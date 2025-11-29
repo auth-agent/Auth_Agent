@@ -4,9 +4,9 @@
 
 # Auth Agent
 
-**OAuth 2.1 for AI Agents**
+**First OpenID Connect Provider for Web Agent. (Sign in with google but for Web Agents)**
 
-Give your AI agents their own login. No password sharing. No cookie scraping.
+Give your AI agents their own login. 
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![npm](https://img.shields.io/npm/v/auth-agent-better-auth)](https://www.npmjs.com/package/auth-agent-better-auth)
