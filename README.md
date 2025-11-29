@@ -224,6 +224,6 @@ MIT License
 
 <div align="center">
 
-**Star this repo if you want AI agents to have proper authentication**
+**Built by Het Patel for the AI Agents Community**
 
 </div>
