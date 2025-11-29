@@ -1,0 +1,88 @@
+{
+  "name": "auth-agent-better-auth",
+  "version": "0.1.0",
+  "description": "Better Auth plugin for Auth Agent - OAuth 2.1 authentication for AI agents",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server/index.d.ts",
+      "import": "./dist/server/index.mjs",
+      "require": "./dist/server/index.js"
+    },
+    "./client": {
+      "types": "./dist/client/index.d.ts",
+      "import": "./dist/client/index.mjs",
+      "require": "./dist/client/index.js"
+    },
+    "./client/react": {
+      "types": "./dist/client/react.d.ts",
+      "import": "./dist/client/react.mjs",
+      "require": "./dist/client/react.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.mjs",
+      "require": "./dist/components/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm build"
+  },
+  "keywords": [
+    "auth-agent",
+    "better-auth",
+    "authentication",
+    "oauth",
+    "ai-agents",
+    "web-agents",
+    "browser-automation"
+  ],
+  "author": "Auth Agent",
+  "license": "MIT",
+  "peerDependencies": {
+    "better-auth": "^1.4.0",
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.0",
+    "better-auth": "^1.4.3",
+    "react": "^19.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Auth-Agent/auth-agent.git",
+    "directory": "Auth_Agent/better-auth-plugin"
+  },
+  "bugs": {
+    "url": "https://github.com/Auth-Agent/auth-agent/issues"
+  },
+  "homepage": "https://docs.auth-agent.com"
+}

@@ -59,6 +59,7 @@ AI agent authenticating on Profilio platform using browser-use agent.
 - **📋 OAuth Discovery** - RFC 8414 metadata endpoint
 - **🌐 Edge Deployment** - Global deployment on Cloudflare Workers + Supabase PostgreSQL
 - **📦 SDK Support** - TypeScript & Python SDKs for easy integration
+- **🔌 Better Auth Plugin** - [auth-agent-better-auth](https://www.npmjs.com/package/auth-agent-better-auth) - Add Auth Agent to Better Auth sites in 2 minutes
 
 ## 🛠️ Tech Stack
 
@@ -420,9 +421,59 @@ await agent.run()
 
 ### For Website Developers
 
-Add "Sign in with Auth Agent" button to your website in 3 steps:
+Add "Sign in with Auth Agent" to your website. Choose your integration method:
 
-#### 1. Get OAuth Client Credentials
+---
+
+#### 🚀 Option 1: Better Auth Plugin (Recommended)
+
+If you use [Better Auth](https://better-auth.com), add Auth Agent in **2 minutes**:
+
+```bash
+npm install auth-agent-better-auth
+```
+
+```typescript
+// lib/auth.ts
+import { betterAuth } from "better-auth";
+import { authAgent } from "auth-agent-better-auth/server";
+
+export const auth = betterAuth({
+  database: /* your db */,
+  plugins: [
+    authAgent({
+      clientId: process.env.AUTH_AGENT_CLIENT_ID!,
+      clientSecret: process.env.AUTH_AGENT_CLIENT_SECRET!,
+      scenario: "fullAccount", // or "contextualProfile" or "freshProfile"
+    })
+  ]
+});
+```
+
+```tsx
+// Login page
+import { AuthAgentButton } from "auth-agent-better-auth/components";
+
+export default function Login() {
+  return (
+    <AuthAgentButton callbackURL="/dashboard">
+      Sign in with Auth Agent
+    </AuthAgentButton>
+  );
+}
+```
+
+**That's it!** The plugin handles OAuth 2.1, PKCE, callbacks, sessions, and all three integration scenarios.
+
+**npm:** [auth-agent-better-auth](https://www.npmjs.com/package/auth-agent-better-auth)
+
+---
+
+#### Option 2: Manual Integration
+
+For custom auth systems or non-Better-Auth setups:
+
+##### 1. Get OAuth Client Credentials
 
 Visit the [Auth Agent Console](https://auth-agent.com/console/website) to register your OAuth client:
 
@@ -433,7 +484,7 @@ Visit the [Auth Agent Console](https://auth-agent.com/console/website) to regist
 
 **Console:** [https://auth-agent.com/console/website](https://auth-agent.com/console/website)
 
-#### 2. Add the Auth Agent Button
+##### 2. Add the Auth Agent Button
 
 ```typescript
 // components/AuthAgentButton.tsx
@@ -474,7 +525,7 @@ export function AuthAgentButton() {
 }
 ```
 
-#### 3. Handle the OAuth Callback
+##### 3. Handle the OAuth Callback
 
 ```typescript
 // app/api/auth/callback/route.ts
@@ -807,6 +858,7 @@ MIT
 - **Documentation**: https://docs.auth-agent.com
 - **Agent Console**: https://auth-agent.com/console/agent
 - **Website Console**: https://auth-agent.com/console/website
+- **Better Auth Plugin**: https://www.npmjs.com/package/auth-agent-better-auth
 - **Repository**: https://github.com/auth-agent/auth-agent
 - **Live API**: https://api.auth-agent.com
 

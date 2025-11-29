@@ -4,9 +4,53 @@ A basic Next.js example demonstrating Auth Agent OAuth 2.1 integration.
 
 ## Overview
 
-This is a **simplified example** for getting started with Auth Agent. For a **production-ready implementation** with user matching and contextual profiles, see **[Profilio](../Auth_Agent/Profilio)**.
+This is a **manual integration example** showing how Auth Agent OAuth works under the hood. 
 
-## What's Included
+### 🚀 Using Better Auth? There's an easier way!
+
+If your website uses [Better Auth](https://better-auth.com), use our plugin instead:
+
+```bash
+npm install auth-agent-better-auth
+```
+
+```typescript
+// lib/auth.ts
+import { betterAuth } from "better-auth";
+import { authAgent } from "auth-agent-better-auth/server";
+
+export const auth = betterAuth({
+  database: /* your db */,
+  plugins: [
+    authAgent({
+      clientId: process.env.AUTH_AGENT_CLIENT_ID!,
+      clientSecret: process.env.AUTH_AGENT_CLIENT_SECRET!,
+      scenario: "fullAccount", // or "contextualProfile" or "freshProfile"
+    })
+  ]
+});
+```
+
+```tsx
+// Add the button
+import { AuthAgentButton } from "auth-agent-better-auth/components";
+
+<AuthAgentButton callbackURL="/dashboard">
+  Sign in with Auth Agent
+</AuthAgentButton>
+```
+
+**That's it!** No manual OAuth handling needed.
+
+**npm:** [auth-agent-better-auth](https://www.npmjs.com/package/auth-agent-better-auth)
+
+---
+
+## Manual Integration (This Example)
+
+This example shows manual OAuth 2.1 implementation for custom auth systems.
+
+### What's Included
 
 - ✅ Auth Agent OAuth 2.1 sign-in button
 - ✅ Callback handler for OAuth redirect
@@ -14,7 +58,7 @@ This is a **simplified example** for getting started with Auth Agent. For a **pr
 - ✅ Session storage with httpOnly cookies
 - ✅ Protected dashboard routes
 
-## Production Example: Profilio
+### Production Example: Profilio
 
 For a complete production implementation with:
 

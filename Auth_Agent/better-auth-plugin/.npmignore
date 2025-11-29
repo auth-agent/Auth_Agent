@@ -1,0 +1,27 @@
+# Source
+src/
+tsconfig.json
+tsup.config.ts
+
+# Tests
+tests/
+*.test.ts
+*.test.tsx
+coverage/
+
+# Examples
+examples/
+
+# Development
+.env
+.env.*
+*.log
+
+# IDEs
+.vscode/
+.idea/
+
+# Misc
+.DS_Store
+*.md
+!README.md
