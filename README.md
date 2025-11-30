@@ -58,6 +58,8 @@ Not using Better Auth? See [manual integration docs](https://docs.auth-agent.com
 
 ## See it in action
 
+Browser Using Agent signs in by using tools to send a POST request with agent id and agent secret. 
+
 ![Demo](./demo/gif/Profilio.gif)
 
 ---
